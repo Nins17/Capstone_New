@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Starter Page - DiaRec Bootstrap Template</title>
+  <title>Diarec Patient</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -95,8 +95,8 @@
   <table class="table table-bordered table-striped">
     <thead class="table-primary">
       <tr>
-        <th >Date Received <i id="arrow-0" class="bi bi-chevron-up"></i></th>
-        <th >Test <i id="arrow-1" class="bi bi-chevron-up"></i></th>
+        <th >Date Uploaded <i id="arrow-0" class="bi bi-chevron-up"></i></th>
+        <th > <i id="arrow-1" class="bi bi-chevron-up"></i></th>
         <th >Clinician Comment <i id="arrow-2" class="bi bi-chevron-up"></i></th>
         <th >Doctor <i id="arrow-3" class="bi bi-chevron-up"></i></th>
       </tr>
@@ -105,13 +105,7 @@
       <tr>
         <td>2025-02-20</td>
         <td>Blood Test</td>
-        <td><a href="files/Laboratory-Report-Form-PDF.docx" onclick="alert('Download file?');">Download Result</a></td>
-        <td>Dr. John Doe</td>
-      </tr>
-      <tr>
-        <td>2025-02-20</td>
-        <td>Blood Test</td>
-        <td><a href="">Record File</a></td>
+        <td><a href="{{url_for ('static',filename='files/Laboratory-Report-Form-PDF.docx')}}" onclick="alert('Download file?');">Download Result</a></td>
         <td>Dr. John Doe</td>
       </tr>
     </tbody>

@@ -53,28 +53,13 @@
         </a>
 
         <nav id="navmenu" class="navmenu">
-          <ul>
-            <li><a href="/admin_home">Home<br></a></li>            
-            <li><a href="/addpatient">Add Patient</a></li>
-            <li><a href="/lab_result"> Lab Results</a></li>
-
-          <li class="dropdown">
-  <a href="#">
-    <span>Doctor</span> 
-    <i class="bi bi-chevron-down toggle-dropdown"></i>
-  </a>
-  <ul class="dropdown-menu">
-   
-    <li><a href="/sign_out" class="dropdown-item d-flex align-items-center text-danger"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
-  </ul>
-</li>
 
            
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
-        <a class="cta-btn d-none d-sm-block" href="#appointment">ADD RESULT</a>
+        <a class="cta-btn d-none d-sm-block" href="/sign_out">Cancel</a>
 
       </div>
 
@@ -85,60 +70,47 @@
   <main class="main flex-grow-1 mt-5">
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       <div class="d-flex justify-content-between align-items-center">
-        <h2>Lab Results</h2>
-        <input class="form-control form-control-sm" id="myInput" type="text" placeholder="Search.." style="width: 250px;">
+        <h2>Update Password</h2>  
       </div>
       <br>
-      
-      <!-- Updated Table -->
-      <table class="table table-bordered table-striped">
-        <thead class="table-info" style="font-family:">
-          <tr>
-            <th onclick="sortTable(0)">Patient ID <i id="arrow-0" class="bi bi-chevron-up"></i></th>
-            <th onclick="sortTable(1)">Patient Name <i id="arrow-1" class="bi bi-chevron-up"></i></th>
-            <th onclick="sortTable(2)">Gender <i id="arrow-2" class="bi bi-chevron-up"></i></th>
-            <th onclick="sortTable(2)">Age <i id="arrow-2" class="bi bi-chevron-up"></i></th>
-            <th onclick="sortTable(3)">Email <i id="arrow-3" class="bi bi-chevron-up"></i></th>
-            <th onclick="sortTable(4)">Contact <i id="arrow-4" class="bi bi-chevron-up"></i></th>
-            <th onclick="sortTable(5)">Blood Type <i id="arrow-5" class="bi bi-chevron-up"></i></th>
-            <th onclick="sortTable(5)">Status <i id="arrow-5" class="bi bi-chevron-up"></i></th>
-           <th onclick="sortTable(5)" style="text-align:center;">Action</i></th>
-          </tr>
-        </thead>
-        <tbody id="myTable">
-            {%for patient in patients%}
-          <tr>
-          
-            <td>{{patient[0]}}</td>
-            <td>{{patient[2]+" "+ patient[4]+" "+ patient[3]}}</td>
-            <td>{{patient[5]}}</td>
-            <td>{{patient[6]}}</td>
-            <td>{{patient[10]}}</td>
-            <td>{{patient[9]}}</td>
-            <td>{{patient[11]}}</td>
-            <td>Processing</td>
-            <td> <button type="button" class="btn btn-primary mx-1"
-              data-bs-toggle="modal" data-bs-target="#patient"
-              style="border-radius: 20px; width:90px; padding: 5px; font-size: 10px; transition: all 0.3s;">
-          Open Records
-      </button>
-      <button type="button" class="btn btn-danger mx-1"
-              data-bs-toggle="modal" data-bs-target="#admin"
-              style="border-radius: 20px;width:70px; padding: 5px; font-size: 10px; transition: all 0.3s;">
-          Delete
-      </button></td>
-            
-          </tr>
-          {%endfor%}
-        </tbody>
-      </table>
-    </div>
-  </main>
-
-  
- 
-  
-  
+      <div class="modal-dialog" style="margin-bottom:10%;width:50%;">
+        <div class="modal-content">
+      <div class="modal-body">
+        <form action="/update_patient_pass" method="POST">
+            <label>ID</label><br>
+              <div class="input-group">
+                  <input type="text" class="form-control" required name="patid" value={{patient_id}} readonly>
+              </div><br>
+              <label>New Password</label><br>
+              <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control" required name="newpass" placeholder="Enter New Password">
+              </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                      {% for category, message in messages %}
+                          <p class="text-center shadow-sm"
+                          style="align-items:center;display:fix;padding:5px; font-size:10px; width:300px; height:25px;{% if category == 'error' %}color:red;background-color:rgba(244, 231, 231, 0.67);{% else %}color:rgba(21, 157, 0, 0.91);background-color:rgba(231, 244, 227, 0.67);{% endif %}">
+                              <b>{% if category == 'error' %}ERROR{% else %}Success{% endif %}</b>: {{ message }}
+                          </p>
+                      {% endfor %}
+                  {% endif %}
+              {% endwith %}
+                          
+              <label>Re-type Password:</label><br>
+              <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control" required name="confirm_pass" placeholder="Confirm Password">
+              </div><br>
+              <div class="modal-footer">
+                <input type="reset" class="btn btn-secondary m-2" value="CLEAR">
+                <input type="submit" class="btn btn-primary text-light" value="SUBMIT">
+            </div>  
+   </div>
+ </form>
+ </div>
+ </div>
+ </div>
   
 
   <footer id="footer" class="footer light-background mt-auto" >
@@ -171,8 +143,7 @@
   <script src="{{url_for('static',filename='assets/js/table.js')}}"></script>
 
 
- 
-    
+
   
   
 </body>

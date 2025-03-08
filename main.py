@@ -18,88 +18,30 @@ mysql.init_app(app)
 def get_db_cursor():
     conn = mysql.connect()
     cursor = conn.cursor()
-    return cursor
+    return (cursor ,conn)
 
+#pages
 @app.route('/')
 def land():
     return render_template("land.html")
         
-
 @app.route('/about',methods=["POST","GET"])
 def about():
-    return render_template("about.html",first_name=session["account"][2]) 
+    return render_template("about.html") 
 
 @app.route('/contact',methods=["POST","GET"])
 def contact():
-    return render_template("contact.html",first_name=session["account"][2]) 
+    return render_template("contact.html")
 
-        
+@app.route('/addpatient', methods=["POST", "GET"])
+def addpatient():
+    
+    if session.get('log_admin') == True:
+        return render_template("addpatient.html")
+    else:
+        flash('Admin Not Authorized', 'error')
+        return redirect(url_for('land'))
 
-@app.route('/login_patient',methods=["POST","GET"])
-def login_patient():
-    if request.method == "POST":
-        patient_id = int(request.form["patient_id"])
-        patient_password = str(request.form["patient_password"])
-        
-        
-        cursor = get_db_cursor()
-        cursor.execute('SELECT * FROM patient WHERE pat_id=%s AND pat_pass=%s',(patient_id,patient_password)) 
-        account = cursor.fetchone()  # Instead of fetching one, fetch everything.
-        patient_acc=[]
-        if account:
-            for i in account:
-                patient_acc.append(i)
-        else:
-            flash( 'No Patient Found!','error')
-            return redirect(url_for('land'))
-            
-        print(patient_acc)
-        print(patient_id,patient_password)
-        
-        if patient_acc:
-            session["patient_id"] = patient_id
-            session["patient_password"] = patient_password
-            session["account"]= patient_acc
-            session['log_patient']= True
-          
-        
-            return render_template("records.html",first_name=session["account"][2])
-        else:
-            session['log_patient']= False
-            flash( 'No Patient Found!','error')
-            return redirect(url_for('land'))
-        
-@app.route('/login_admin',methods=["POST","GET"])
-def login_admin():
-    if request.method == "POST":
-        admin_id = int(request.form["admin_id"])
-        admin_password = str(request.form["admin_pass"])
-        
-        cursor = get_db_cursor()
-        cursor.execute('SELECT * FROM admin WHERE admin_id=%s AND admin_pass=%s',(admin_id,admin_password)) 
-        ad_account = cursor.fetchone()  # \\                                                                                                                             mmnmmmmmmmmmmmmmmmmmmnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmnstead of fetching one, fetch everything.
-        admin_acc=[]
-        if ad_account:
-            for i in ad_account:
-                admin_acc.append(i)
-        else:
-            flash( 'No Patient Found!','error')
-            return redirect(url_for('land'))
-            
-        print(admin_acc)
-        print(admin_id,admin_password)
-        
-        if admin_acc:
-            session["admin_id"] = admin_id
-            session["admin_password"] = admin_password
-            session["admin_account"]= admin_acc
-            session['log_admin']= True
-            return render_template("results.html",first_name=session["admin_account"][2])
-        else:
-            session['log_admin']= False
-            flash( 'Admin Not Authorize','error')
-            return redirect(url_for('land'))
-        
 @app.route('/patient_home',methods=["POST","GET"])
 def patient_home():
     login_patient = session.get('login_patient')
@@ -109,22 +51,155 @@ def patient_home():
         flash('Patient not authorize!', 'error')
         return redirect(url_for('land'))
     
-       
-            
-        
-    
-
 @app.route('/admin_home')
 def admin_home():
-    login_admin = session.get('login_admin')
-    if login_admin == True:
-        return render_template("results.html",first_name=session["account"][2])
-    else:
-        flash('Admin not authorize!', 'error')
-        return redirect(url_for('land'))
+    if session.get('log_admin') == True:
+        cursor, conn = get_db_cursor()
         
+        cursor.execute("SELECT * FROM patient")
+        patient_list=cursor.fetchall()
+        
+        return render_template("results.html",patients=patient_list)
+    else:
+        flash('Admin Not Authorized', 'error')
+        return redirect(url_for('land'))
+               
+#LOG INS
+@app.route('/login_patient',methods=["POST","GET"])
+def login_patient():
+    if request.method == "POST":
+        session['patient_id'] = int(request.form["patient_id"])
+        patient_password = str(request.form["patient_password"])
+        
+        
+        cursor ,conn = get_db_cursor()
+        cursor.execute('SELECT * FROM patient WHERE pat_id=%s AND pat_pass=%s',( session['patient_id'],patient_password)) 
+        patient_acc = cursor.fetchall() # Instead of fetching one, fetch everything.
+        
+        print(session['patient_id'],patient_password)
+        
+        if patient_acc:
+            print(patient_acc)
+            for info in patient_acc:
+                acc_info=list(info)
+                
+            print(acc_info)
+           
+            
+            if acc_info[1] == (acc_info[3]+"123"):
+                return render_template('update_pass.html',patient_id= session['patient_id'])                       
+            else:            
+                session["patient_password"] = patient_password
+                session["account"]= acc_info
+                session['log_patient']= True
+                    
+                return render_template("records.html",first_name=session["account"][2])
+        else:
+            session['log_patient']= False
+            flash( 'No Patient Found!','error')
+            return redirect(url_for('land'))
+         
+@app.route('/login_admin', methods=["POST", "GET"])
+def login_admin():
+    if request.method == "POST":
+        admin_id = int(request.form["admin_id"])
+        admin_password = str(request.form["admin_pass"])
+
+        cursor, conn = get_db_cursor()
+
+      
+        cursor.execute('SELECT * FROM admin WHERE admin_id=%s AND admin_pass=%s', (admin_id, admin_password))
+        ad_account = cursor.fetchone()
+
+        if ad_account:    
+            session["admin_id"] = admin_id
+            session["admin_password"] = admin_password
+            session["admin_account"] = ad_account  
+            session["log_admin"] = True  
+            cursor.close()
+            conn.close()
+            return redirect(url_for('admin_home'))
+        else:
+            flash('Admin Not Authorized', 'error')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('land'))
+
+    return render_template('land.html')
 
 
+#queries      
+@app.route('/add_patient',methods=["POST","GET"])
+def add_patient():
+    alert_message = None
+    redirect_url = "/add_patient"
+
+    if request.method == "POST":
+       
+        first_name = str(request.form["patientfName"])
+        middle_name = str(request.form["patientmName"])
+        last_name = str(request.form["patientlName"])
+        gender = str(request.form["patientGender"])
+        age = int(request.form["patientAge"])
+        bday = str(request.form["patientBD"])
+        address = str(request.form["patientAddress"])
+        pcontact = request.form["patientContact"]
+        email = request.form["patientEmail"]
+        bloodtype = str(request.form["patientBloodType"])
+
+
+        cursor, conn = get_db_cursor()
+
+       
+        cursor.execute("SELECT * FROM patient WHERE contact_num=%s AND email=%s" , ( pcontact,email))
+        p_acc = cursor.fetchone()
+        print(p_acc)
+
+        if p_acc:
+            alert_message = "Patient already exists!"
+            redirect_url = "/add_patient"
+        else:
+        
+            query = """
+            INSERT INTO patient 
+            (pat_id, pat_pass, first_name, last_name, middle_intl, gender, age, birthday, address, contact_num, email, blood_type) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (0000, f"{last_name}123", first_name,  last_name, middle_name,gender, age, bday, address, pcontact, email, bloodtype)
+            cursor.execute(query, values)
+            conn.commit()
+            alert_message = "Patient successfully added!"
+            redirect_url = "/admin_home"
+
+        
+        cursor.close()
+        conn.close()
+
+   
+    return render_template('addpatient.html', alert_message=alert_message, redirect_url=redirect_url)
+                                                       
+@app.route('/update_patient_pass',methods=["POST","GET"])
+def update_patient_pass(): 
+    
+    if request.method == "POST":
+        session['patid'] = session.get('patient_id')
+        new_pass = str(request.form["newpass"])
+        confirm_pass= str(request.form["confirm_pass"])
+        cursor ,conn = get_db_cursor()        
+        if len(new_pass)>=8:
+            if new_pass == confirm_pass:
+                cursor.execute("UPDATE `patient` SET `pat_pass`=%s WHERE `pat_id`=%s ",(new_pass,session['patid']))
+                conn.commit()
+                flash('Password Updated Successfuly! Please Log in again.')
+                return redirect(url_for('land'))
+            else:
+                flash('Password not match!', 'error')
+                return render_template('update_pass.html',patient_id=session['patid'])
+        else:
+            flash('Password length must be 8 or longer', 'error')
+            return render_template('update_pass.html',patient_id=session['patid'])
+
+#sign_out
 @app.route('/sign_out')
 def sign_out():
     session.clear()

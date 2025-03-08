@@ -83,25 +83,25 @@
                                 style="border-radius: 20px;width:150px; padding: 5px; font-size: 25px; transition: all 0.3s;font-size:20px">
                             Doctor
                         </button>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <p class="text-center m-3 shadow-sm"
+                                style="display:fix;padding:5px; font-size:10px; width:300px; height:25px;{% if category == 'error' %}color:red;background-color:rgba(248, 220, 220, 0.67);{% else %}color:rgba(21, 157, 0, 0.91);background-color:rgba(226, 248, 220, 0.67);{% endif %}">
+                                    <b>{% if category == 'error' %}ERROR{% else %}Success{% endif %}</b>: {{ message }}
+                                </p>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
                     </div>
-                    <p>
-                      {% with messages = get_flashed_messages() %}
-                      {% if messages %}
-                          {% for message in messages %}
-                          <p class="text-center m-3 shadow-sm"
-                          style="display:fix;color:red;background-color:rgba(248, 220, 220, 0.67); border: 2px solid rgba(88, 0, 0, 0.69); padding:5px;font-size:10px; width:300px; heigth:15px" >
-                           <b> ERROR</b>: {{ message }}
-                          </p>     
-                  
-                             
-                          {% endfor %}
-                      {% endif %}
-                      {% endwith %}
-                  </p> 
+                    
+                      
+           
+                  <a href=""><pclass="w-100 text-center pt-3 border-top"
+                    style="font-size: 10px;"><span>contact us</span></p></a>
                   
                 </div><!-- End Section Title -->
-               <a href=""><pclass="w-100 text-center pt-3 border-top"
-                  style="color: #666; font-size: 10px;"><span>contact us</span></p></a>
+                
             </section><!-- /Starter Section -->
 
 
