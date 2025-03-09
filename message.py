@@ -1,12 +1,11 @@
 import vonage
 
 # Create an instance of the Vonage client with your credentials
-client = vonage.Client(key="4278da57", secret="MFVKEoZOh8R8AMXt")
+client = vonage.Client(key="a18a6465", secret="w5p8n9Lc4TNmulMP")
 
 # Create an instance of the SMS client
 sms = vonage.Sms(client)
 
-# Send a message
 responseData = sms.send_message(
     {
         "from": "DiaRec",  # Sender name (or phone number)

@@ -17,7 +17,7 @@ app.config['UPLOAD_FOLDER'] = 'static/files'
 mysql.init_app(app)
 
 # Create a Vonage client instance for sending SMS
-client = vonage.Client(key="4278da57", secret="MFVKEoZOh8R8AMXt")
+client = vonage.Client(key="a18a6465", secret="w5p8n9Lc4TNmulMP")
 sms = vonage.Sms(client)
 
 def get_db_cursor():
