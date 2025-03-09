@@ -84,9 +84,10 @@
 
   <main class="main flex-grow-1 mt-5">
     <div class="container" data-aos="fade-up" data-aos-delay="100">
-      <div class="d-flex justify-content-between align-items-center">
-        <h2>Addpatient</h2>
-      </div>
+      <div class="d-flex justify-content-center align-items-center">
+        <h2 class="text-center">ADD PATIENT</h2>
+    </div>
+    
       <br>
 
     
@@ -110,7 +111,7 @@
                   <span class="input-group-text"><i class="bi bi-person"></i></span>
                   <input type="text" class="form-control" required name="patientlName" placeholder="Enter Patient Last Name">
               </div><br>
-              
+              <div class="row">
                 <div class="col-md-6">
                     <label>GENDER</label><br>
                     <div class="input-group">
@@ -123,16 +124,25 @@
                         </select>
                     </div><br>
                 </div>
-          
-
-            <div class="row">
-              <div class="col-md-6">
-                  <label>AGE</label><br>
-                  <div class="input-group">
-                      <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                      <input type="number" class="form-control" required name="patientAge" placeholder="Enter Age">
-                  </div><br>
-              </div>
+                  <div class="col-md-6">
+                    <label>BLOOD TYPE</label><br>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-droplet"></i></span>
+                        <select class="form-select" name="patientBloodType" required>
+                            <option value="">Select</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div><br>
+                  </div>
+                 </div> 
+                
 
                 <div class="row">
                   <div class="col-md-6">
@@ -142,14 +152,24 @@
                           <input type="date" class="form-control" required name="patientBD" placeholder="Enter Age">
                       </div><br>
                   </div>
+                  <div class="col-md-6">
+                    <label>AGE</label><br>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                        <input type="number" class="form-control" required name="patientAge" placeholder="Enter Age">
+                    </div><br>
+                </div>
 
+
+      
                   <label>HOME ADDRESS</label><br>
                   <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-house"></i></span>
                       <input type="text" class="form-control" required name="patientAddress" placeholder="Enter Address">
                   </div><br>
+
               
-            <div class="row">
+            <div class="row mt-4">
               <div class="col-md-6">
                   <label>CONTACT NUMBER</label><br>
                   <div class="input-group">
@@ -167,21 +187,7 @@
           </div>
               
            
-                <label>BLOOD TYPE</label><br>
-              <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-droplet"></i></span>
-                  <select class="form-select" name="patientBloodType" required>
-                      <option value="">Select</option>
-                      <option value="A+">A+</option>
-                      <option value="A-">A-</option>
-                      <option value="B+">B+</option>
-                      <option value="B-">B-</option>
-                      <option value="O+">O+</option>
-                      <option value="O-">O-</option>
-                      <option value="AB+">AB+</option>
-                      <option value="AB-">AB-</option>
-                  </select>
-              </div><br>
+              
             </div>
             <p>
       </div>
@@ -191,9 +197,7 @@
       </div>
   </div>
 </form>
-</div>
-</div>
-</div>
+  </main>
       
   
 
