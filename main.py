@@ -25,36 +25,48 @@ def get_db_cursor():
     cursor = conn.cursor()
     return (cursor ,conn)
 
-# Pages
+
+################################# PAGES ###############################
 @app.route('/')
 def land():
     return render_template("land.html")
 
+#about land page
 @app.route('/about', methods=["POST", "GET"])
 def about():
     return render_template("about.html") 
 
+#contact land page
 @app.route('/contact', methods=["POST", "GET"])
 def contact():
     return render_template("contact.html")
 
+#add patient form page
 @app.route('/addpatient', methods=["POST", "GET"])
 def addpatient():
     if session.get('log_admin') == True:
-        return render_template("addpatient.html")
+        cursor, conn = get_db_cursor()
+        
+        cursor.execute("SELECT * FROM patient")
+        patient_list = cursor.fetchall()
+        return render_template("addpatient.html", patients=patient_list)
     else:
         flash('Admin Not Authorized', 'error')
         return redirect(url_for('land'))
 
+#patient homepage
 @app.route('/patient_home', methods=["POST", "GET"])
 def patient_home():
-    login_patient = session.get('login_patient')
-    if login_patient == True:
-        return render_template("records.html", first_name=session["account"][2])
+    if session.get('log_patient') == True:
+        cursor, conn = get_db_cursor()
+        cursor.execute('SELECT * FROM records WHERE patient_id=%s ', (session.get('patient_id'))) 
+        patient_records = cursor.fetchall()
+        return render_template("records.html", first_name=session["account"][2], patient_records=patient_records)
     else:
         flash('Patient not authorize!', 'error')
         return redirect(url_for('land'))
 
+#admin/doctor homepage    
 @app.route('/admin_home')
 def admin_home():
     if session.get('log_admin') == True:
@@ -68,7 +80,47 @@ def admin_home():
         flash('Admin Not Authorized', 'error')
         return redirect(url_for('land'))
 
-# LOG INS
+#lab result land page
+@app.route('/lab_results', methods=["POST","GET"])
+def lab_results():
+    if session.get('log_admin') == True:
+        cursor, conn = get_db_cursor()
+        
+        cursor.execute('SELECT * FROM records') 
+        patient_records = cursor.fetchall()
+        print(patient_records)
+        
+        cursor.execute("SELECT * FROM patient")
+        patient_list = cursor.fetchall()
+        return render_template("patientrecords.html",patient_records=patient_records, patients=patient_list)
+    else:
+        flash('Admin Not Authorized', 'error')
+        return redirect(url_for('land'))
+    
+#add result form page   
+@app.route('/add-result/<int:patient_id>')
+def add_result(patient_id):
+    cursor, conn = get_db_cursor()
+
+    cursor.execute("SELECT * FROM patient WHERE pat_id=%s",(patient_id))
+    patient_list = cursor.fetchall()
+    return render_template("addrecord.html", selected_patient=patient_list)
+
+@app.route('/open_record/<int:patient_id>')
+def open_record(patient_id):
+    cursor, conn = get_db_cursor()
+
+    cursor.execute("SELECT * FROM records WHERE patient_id=%s",(patient_id))
+    patient_list = cursor.fetchall()
+    return render_template("recordsviewerspecific.html", patient_records=patient_list)
+
+
+############# END PAGES ####################
+
+
+
+
+##############LOG INS########################
 @app.route('/login_patient', methods=["POST", "GET"])
 def login_patient():
     if request.method == "POST":
@@ -89,7 +141,11 @@ def login_patient():
                 session["patient_password"] = patient_password
                 session["account"] = acc_info
                 session['log_patient'] = True
-                return render_template("records.html", first_name=session["account"][2])
+                
+                cursor.execute('SELECT * FROM records WHERE patient_id=%s ', (session['patient_id'])) 
+                patient_records = cursor.fetchall()
+                print(patient_records)
+                return render_template("records.html", first_name=session["account"][2], patient_records=patient_records)
         else:
             session['log_patient'] = False
             flash('No Patient Found!', 'error')
@@ -122,7 +178,10 @@ def login_admin():
 
     return render_template('land.html')
 
-# Queries      
+############# END LOGINS ####################
+
+
+##################### QUERIES ####################     
 @app.route('/add_patient', methods=["POST", "GET"])
 def add_patient():
     alert_message = None
@@ -136,7 +195,7 @@ def add_patient():
         age = int(request.form["patientAge"])
         bday = str(request.form["patientBD"])
         address = str(request.form["patientAddress"])
-        pcontact = request.form["patientContact"]
+        pcontact = str("+63"+request.form["patientContact"])
         email = request.form["patientEmail"]
         bloodtype = str(request.form["patientBloodType"])
 
@@ -150,33 +209,38 @@ def add_patient():
             alert_message = "Patient already exists!"
             redirect_url = "/add_patient"
         else:
-            query = """
-            INSERT INTO patient 
-            (pat_id, pat_pass, first_name, last_name, middle_intl, gender, age, birthday, address, contact_num, email, blood_type) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            values = (0000, f"{last_name}123", first_name, last_name, middle_name, gender, age, bday, address, pcontact, email, bloodtype)
-            cursor.execute(query, values)
-            conn.commit()
+            if len(pcontact)==13 and pcontact.startswith("+63"):
+                query = """
+                INSERT INTO patient 
+                (pat_id, pat_pass, first_name, last_name, middle_intl, gender, age, birthday, address, contact_num, email, blood_type) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = (0000, f"{last_name}123", first_name, last_name, middle_name, gender, age, bday, address, f"63{pcontact}", email, bloodtype)
+                cursor.execute(query, values)
+                conn.commit()
 
-            # Get the patient ID of the newly added patient (auto-incremented)
-            patient_id = cursor.lastrowid
+                # Get the patient ID of the newly added patient (auto-incremented)
+                patient_id = cursor.lastrowid
 
-            # Send SMS to the newly added patient with their ID and password
-            message = f"Hello {first_name}, your Patient ID is {patient_id} and your password is {last_name}123. Please use these details to log in to your account."
-            responseData = sms.send_message({
-                "from": "Diarec",  # Sender name
-                "to": pcontact,  # Recipient's phone number
-                "text": message,  # Message content
-            })
+                # Send SMS to the newly added patient with their ID and password
+                message = f"Hello {first_name}, your Patient ID is {patient_id} and your password is {last_name}123. Please use these details to log in to your account."
+                responseData = sms.send_message({
+                    "from": "Diarec",  # Sender name
+                    "to": pcontact,  # Recipient's phone number
+                    "text": message,  # Message content
+                })
 
-            if responseData["messages"][0]["status"] == "0":
-                print(f"Message sent successfully to {pcontact}")
+                if responseData["messages"][0]["status"] == "0":
+                    print(f"Message sent successfully to {pcontact}")
+                else:
+                    print(f"Message failed to send: {responseData['messages'][0]['error-text']}")
+
+                alert_message = "Patient successfully added and message sent!"
+                redirect_url = "/admin_home"
             else:
-                print(f"Message failed to send: {responseData['messages'][0]['error-text']}")
-
-            alert_message = "Patient successfully added and message sent!"
-            redirect_url = "/admin_home"
+                alert_message = "invalid contact! follow contact format"
+                redirect_url = "/add_patient"
+                
 
         cursor.close()
         conn.close()
@@ -203,6 +267,54 @@ def update_patient_pass():
             flash('Password length must be 8 or longer', 'error')
             return render_template('update_pass.html', patient_id=session['patid'])
 
+@app.route('/addresults', methods=["POST", "GET"])
+def addresults():
+    if request.method == 'POST':
+    
+        patient_id = int(request.form.get('patientid'))
+        patient_name = str(request.form.get('patientname'))
+        bloodtype = request.form.get('bloodtype')
+        date_tested = str(request.form.get('date_tested'))
+        result_release_date = str(request.form.get('result_release_date'))
+        doctor_in_charge = request.form.get('doctor_in_charge')
+        test_type = request.form.get('test_type')
+        file = request.files.get('attachment')
+
+        
+        if 'attachment' not in request.files:
+            status = "Processing"
+        elif 'attachment' in request.files:
+            status = "Available/Uploaded"
+        else:
+            status ="Postponed"
+
+    
+        file_path = None 
+        if file and file.filename != '':
+            filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            file.save(filename)
+            file_path = "files/" + file.filename
+
+        
+        cursor, conn = get_db_cursor()
+        query = """
+            INSERT INTO `records` 
+            (`id`,`patient_id`, `patient_name`, `bloodtype`, `date`, `dateresult`, `file`, `status`, `incharge`, `test_type`) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
+        """
+        values = (0,patient_id, patient_name, bloodtype, date_tested, result_release_date, file_path, status, doctor_in_charge, test_type)
+                
+        cursor, conn = get_db_cursor()   
+         
+        
+        cursor.execute(query, values)
+        conn.commit()
+        
+        cursor.close()
+        conn.close()
+        return redirect(url_for('admin_home'))
+
+    
 # Sign Out
 @app.route('/sign_out')
 def sign_out():
