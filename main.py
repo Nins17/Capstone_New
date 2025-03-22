@@ -114,6 +114,21 @@ def open_record(patient_id):
     patient_list = cursor.fetchall()
     return render_template("recordsviewerspecific.html", patient_records=patient_list)
 
+@app.route('/open_profile/<int:patient_id>')
+def open_profile(patient_id):
+    cursor, conn = get_db_cursor()
+    
+    cursor.execute("SELECT * FROM patient WHERE pat_id=%s", (patient_id,))
+    patient = cursor.fetchone()
+    
+    if patient:
+        cursor.execute("SELECT * FROM records WHERE patient_id=%s", (patient_id,))
+        patient_records = cursor.fetchall()
+        return render_template("view_profile.html", patient=patient, patient_records=patient_records)
+    else:
+        flash("Patient not found!", "error")
+        return redirect(url_for('admin_home'))
+
 
 ############# END PAGES ####################
 

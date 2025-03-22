@@ -4,13 +4,15 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Diarec Patient</title>
+  <title>Diarec Doctor</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/icon.png') }}">
+
   <meta name="description" content="">
   <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <link href="{{url_for ('static',filename='assets/img/favicon.png')}}" rel="icon">
-  <link href="{{url_for ('static',filename='assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -18,19 +20,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="{{url_for ('static',filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
-  <link href="{{url_for ('static',filename='assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
-  <link href="{{url_for ('static',filename='/vendor/aos/aos.css" rel="stylesheet')}}">
-  <link href="{{url_for ('static',filename='assets/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet">
-  <link href="{{url_for ('static',filename='assets/vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
-  <link href="{{url_for ('static',filename='assets/vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/vendor/aos/aos.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="{{url_for ('static',filename='assets/css/main.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/css/main.css')}}" rel="stylesheet">
 
   <!-- =======================================================
-  * Template Name: DiaRec
-  * Template URL: https://bootstrapmade.com/DiaRec-free-medical-bootstrap-theme/
+  * Template Name: Medilab
+  * Template URL: https://bootstrapmade.com/medilab-free-medical-bootstrap-theme/
   * Updated: Aug 07 2024 with Bootstrap v5.3.3
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
@@ -71,16 +73,7 @@
 
           
         </nav>
-        <div class="drop">
-          <span class="cta-btn d-none d-sm-block dropdown-toggle" href="#appointment" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-            ADD RESULT
-          </span>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            {%for patient in patients%}
-            <li><a class="dropdown-item text-dark" href="/add-result/{{ patient[0] }}"><i>{{patient[0]}} </i><b>{{patient[2]+" "+ patient[4]+" "+ patient[3]}}</b></a></li>
-            {%endfor%}
-          </ul>
-        </div>    
+        
 
     </div>
 
@@ -167,8 +160,99 @@
 
   <!-- Main JS File -->
   <script src="{{url_for ('static',filename='assets/js/main.js')}}"></script>
-  <script src="{{url_for ('static',filename='assets/js/table.')}}'"></script>
-
+  <script src="{{url_for ('static',filename='assets/js/table.js')}}'"></script>
+  
 </body>
+<script>
+  // Filter function
+  document.getElementById("myInput").addEventListener("keyup", function () {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    tbody = document.getElementById("myTable");
+    tr = tbody.getElementsByTagName("tr");
+  
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td");
+        if (td.length > 0) {
+            var showRow = false;
+            for (var j = 0; j < td.length; j++) {
+                txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    showRow = true;
+                    break;
+                }
+            }
+            tr[i].style.display = showRow ? "" : "none";
+        }
+    }
+  });
+  
+  // Sort function
+  function sortTable(n) {
+    var table, tbody, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.querySelector("table"); // Get the first table
+    tbody = document.getElementById("myTable");
+    switching = true;
+    dir = "asc"; // Default sort direction
+  
+    // Reset arrows
+    document.querySelectorAll("th i").forEach(icon => {
+        icon.classList.remove("bi-chevron-down", "bi-chevron-up");
+        icon.classList.add("bi-chevron-up");
+    });
+  
+    while (switching) {
+        switching = false;
+        rows = tbody.getElementsByTagName("tr");
+  
+        for (i = 0; i < rows.length - 1; i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("td")[n];
+            y = rows[i + 1].getElementsByTagName("td")[n];
+  
+            let xValue = isNaN(parseFloat(x.innerText)) ? x.innerText.toLowerCase() : parseFloat(x.innerText);
+            let yValue = isNaN(parseFloat(y.innerText)) ? y.innerText.toLowerCase() : parseFloat(y.innerText);
+  
+            if ((dir === "asc" && xValue > yValue) || (dir === "desc" && xValue < yValue)) {
+                shouldSwitch = true;
+                break;
+            }
+        }
+  
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        } else {
+            if (switchcount === 0 && dir === "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+  
+    // Toggle arrow icons
+    let arrow = document.querySelectorAll("th i")[n];
+    if (dir === "asc") {
+        arrow.classList.remove("bi-chevron-up");
+        arrow.classList.add("bi-chevron-down");
+    } else {
+        arrow.classList.remove("bi-chevron-down");
+        arrow.classList.add("bi-chevron-up");
+    }
+  }
+  
+  // Attach sorting function to header clicks
+  document.addEventListener("DOMContentLoaded", function () {
+    let headers = document.querySelectorAll("th");
+    headers.forEach((header, index) => {
+        header.addEventListener("click", function () {
+            sortTable(index);
+        });
+    });
+  });
+</script>
+  
 
 </html>

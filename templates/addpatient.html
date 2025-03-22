@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Diarec Doctor</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/icon.png') }}">
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -71,16 +72,6 @@
   
             
           </nav>
-          <div class="drop">
-            <span class="cta-btn d-none d-sm-block dropdown-toggle" href="#appointment" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-              ADD RESULT
-            </span>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              {%for patient in patients%}
-              <li><a class="dropdown-item text-dark" href="/add-result/{{ patient[0] }}"><i>{{patient[0]}} </i><b>{{patient[2]+" "+ patient[4]+" "+ patient[3]}}</b></a></li>
-              {%endfor%}
-            </ul>
-          </div>    
   
       </div>
 

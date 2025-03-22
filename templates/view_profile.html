@@ -5,9 +5,8 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Diarec Doctor</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/icon.png') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/icon.png') }}">
 
-  
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -49,7 +48,7 @@
     <div class="branding d-flex align-items-center">
 
       <div class="container position-relative d-flex align-items-center justify-content-between">
-        <a href="index.html" class="logo d-flex align-items-center me-auto">
+        <a href="/admin_home" class="logo d-flex align-items-center me-auto">
           <h1 class="sitename">DiaRec</h1>
         </a>
 
@@ -73,85 +72,49 @@
         
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-
-
-          
         </nav>
-      
-       
       </div>
 
     </div>
 
   </header>
 
-  <main class="main flex-grow-1 mt-5">
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
-      <div class="d-flex justify-content-between align-items-center">
-        <h2>PATIENT RECORDS</h2>
-        <input class="form-control form-control-sm" id="myInput" type="text" placeholder="Search.." style="width: 250px;">
-      </div>
-      <br>
-      
-      <!-- Updated Table -->
-      <div class="table-responsive">
-        <table class="table table-bordered align-middle text-center">
-            <thead class="table-info">
-                <tr>
-                  <th>Profile</th>
-                    <th onclick="sortTable(1)">Patient ID <i id="arrow-0" class="bi bi-chevron-up"></i></th>
-                    <th onclick="sortTable(2)">Patient Name <i id="arrow-1" class="bi bi-chevron-up"></i></th>
-                    <th onclick="sortTable(3)">Status <i id="arrow-5" class="bi bi-chevron-up"></i></th>
-                    <th style="text-align:center;">Action</th>
-                </tr>
-            </thead>
-            <tbody id="myTable">
-                {% for patient in patients %}
-                <tr>
-                  <td>
-                    <div class="text-center">
-                        <img src="{{ url_for('static', filename='assets/img/icon.png') }}" 
-                             alt="Profile Picture" 
-                             class="rounded-circle img-thumbnail"
-                             width="120" height="120">
-                    </div>
-                </td>
-                    <td>{{ patient[0] }}</td>
-                    <td>{{ patient[2] + " " + patient[4] + " " + patient[3] }}</td>
-                    <td>Processing</td>
-                    <td>
-                       
-    
-                        <!-- View Profile -->
-                        <a href="/open_profile/{{ patient[0] }}" title="View Profile">
-                            <button type="button" class="btn btn-primary mx-1 rounded-circle"
-                                style="width: 40px; height: 40px; padding: 5px;">
-                                <i class="bi bi-person"></i>
-                            </button>
-                        </a>
-                         <!-- Open Records -->
-                         <a href="/open_record/{{ patient[0] }}" title="Open Records">
-                          <button type="button" class="btn btn-success mx-1 rounded-circle"
-                              style="width: 40px; height: 40px; padding: 5px;">
-                              <i class="bi bi-folder2-open"></i>
-                          </button>
-                      </a>
-    
-                        <!-- Delete -->
-                        <button type="button" class="btn btn-danger mx-1 rounded-circle"
-                            data-bs-toggle="modal" data-bs-target="#admin" title="Delete"
-                            style="width: 40px; height: 40px; padding: 5px;">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+  <main class="main flex-grow-1 m-5">
+    <div class="container-lg" data-aos="fade-up">
+        <div class="card mx-auto p-4 shadow-lg border-0" style="max-width: 720px; border-radius: 15px;">
+            <div class="card-body text-center">
+                <img src="{{ url_for('static', filename='assets/img/icon.png') }}" 
+                     alt="Profile Picture" 
+                     class="rounded-circle mb-3 p-2 border border-3 border-primary shadow-sm"
+                     width="150" height="150">
+                <h2 class="card-title fw-bold mb-2 fs-3 text-primary">{{ patient[2] }} {{ patient[4] }} {{ patient[3] }}</h2>
+                <p class="text-muted mb-3 fs-5">Patient ID: <span class="fw-semibold text-dark">{{ patient[0] }}</span></p>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-3 fs-5">
+                    <div class="col-6"><strong class="text-secondary">Gender:</strong> <span class="fw-bold text-dark">{{ patient[5] }}</span></div>
+                    <div class="col-6"><strong class="text-secondary">Blood Type:</strong> <span class="fw-bold text-dark">{{ patient[11] }}</span></div>
+                </div>
+                <div class="row g-3 mb-3 fs-5">
+                    <div class="col-6"><strong class="text-secondary">Birthday:</strong> <span class="fw-bold text-dark">{{ patient[7] }}</span></div>
+                    <div class="col-6"><strong class="text-secondary">Age:</strong> <span class="fw-bold text-dark">{{ patient[6] }}</span></div>
+                </div>
+                <div class="row g-3 mb-3 fs-5">
+                    <div class="col-12"><strong class="text-secondary">Home Address:</strong> <span class="fw-bold text-dark">{{ patient[8] }}</span></div>
+                </div>
+                <div class="row g-3 mb-3 fs-5">
+                    <div class="col-6"><strong class="text-secondary">Contact Number:</strong> <span class="fw-bold text-dark">{{ patient[9] }}</span></div>
+                    <div class="col-6"><strong class="text-secondary">Email:</strong> <span class="fw-bold text-dark">{{ patient[10] }}</span></div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    </div>
-  </main>
+</main>
+
+  
+
+
+  
 
   
  

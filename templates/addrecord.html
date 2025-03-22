@@ -72,17 +72,6 @@
 
           
         </nav>
-        <div class="drop">
-          <span class="cta-btn d-none d-sm-block dropdown-toggle" href="#appointment" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-            ADD RESULT
-          </span>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            {%for patient in patients%}
-            <li><a class="dropdown-item text-dark" href="/add-result/{{ patient[0] }}"><i>{{patient[0]}} </i><b>{{patient[2]+" "+ patient[4]+" "+ patient[3]}}</b></a></li>
-            {%endfor%}
-          </ul>
-        </div>    
-
     </div>
 
   </header>
@@ -135,13 +124,6 @@
                                 </div><br>
                             </div>
                         </div>
-    
-                        <label>FILE RESULT ATTACHMENT</label><br>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-paperclip"></i></span>
-                            <input type="file" class="form-control" name="attachment">
-                        </div><br>
-    
                         <div class="row mt-4">
                             <div class="col-md-6">
                                 <label>DOCTOR IN CHARGE</label><br>
@@ -158,12 +140,167 @@
                                 </div><br>
                             </div>
                         </div>
+
+      <label>LAB RESULT</label><br>
+<div class="input-group">
+    <span class="input-group-text"><i class="bi bi-file-earmark-plus"></i></span>
+    <button type="button" class="form-control text-start bg-light border-light text-secondary" data-bs-toggle="modal" data-bs-target="#labResultModal">
+        Enter Lab Result
+    </button>
+</div>
+
+
+<!-- Lab Result Modal -->
+<div class="modal fade" id="labResultModal" tabindex="-1" aria-labelledby="labResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-4 shadow-lg">
+      <div class="modal-header">
+        <h5 class="modal-title" id="labResultModalLabel">Enter Laboratory Results</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="labResultForm">
+          <div class="container-fluid">
+            
+            <!-- Laboratory Information -->
+            <h6 class="text-primary mb-3">LABORATORY INFORMATION</h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Laboratory Name</label>
+                <input type="text" class="form-control" name="lab_name" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Lab Address</label>
+                <input type="text" class="form-control" name="lab_address" required>
+              </div>
+            </div>
+
+            <div class="row g-3 mt-2">
+              <div class="col-md-6">
+                <label class="form-label">Lab Contact Number</label>
+                <input type="text" class="form-control" name="lab_contact" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Date of Report</label>
+                <input type="date" class="form-control" name="report_date" required>
+              </div>
+            </div>
+
+            <!-- Technician and Doctor Information -->
+            <h6 class="text-primary mt-4 mb-3">REPORT PREPARED BY</h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Prepared By</label>
+                <input type="text" class="form-control" name="prepared_by" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Lab Technician</label>
+                <input type="text" class="form-control" name="lab_technician" required>
+              </div>
+            </div>
+
+            <!-- Test Conducted -->
+            <h6 class="text-primary mt-4 mb-3">TEST CONDUCTED</h6>
+            <div class="d-flex flex-wrap gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="test_conducted" value="Blood Test">
+                <label class="form-check-label">Blood Test</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="test_conducted" value="Urine Test">
+                <label class="form-check-label">Urine Test</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="test_conducted" value="X-Ray">
+                <label class="form-check-label">X-Ray</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="test_conducted" value="MRI">
+                <label class="form-check-label">MRI</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="test_conducted" value="CT Scan">
+                <label class="form-check-label">CT Scan</label>
+              </div>
+            </div>
+
+            <!-- Test Results -->
+            <h6 class="text-primary mt-4 mb-3">TEST RESULTS</h6>
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Test Name</th>
+                    <th>Normal Range</th>
+                    <th>Results</th>
+                    <th>Comments</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="text" class="form-control" name="test1"></td>
+                    <td><input type="text" class="form-control" name="test1_range"></td>
+                    <td><textarea class="form-control" name="test1_result" rows="2"></textarea></td>
+                    <td><textarea class="form-control" name="test1_comment" rows="2"></textarea></td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class="form-control" name="test2"></td>
+                    <td><input type="text" class="form-control" name="test2_range"></td>
+                    <td><textarea class="form-control" name="test2_result" rows="2"></textarea></td>
+                    <td><textarea class="form-control" name="test2_comment" rows="2"></textarea></td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class="form-control" name="test3"></td>
+                    <td><input type="text" class="form-control" name="test3_range"></td>
+                    <td><textarea class="form-control" name="test3_result" rows="2"></textarea></td>
+                    <td><textarea class="form-control" name="test3_comment" rows="2"></textarea></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Doctor's Notes -->
+            <h6 class="text-primary mt-4 mb-3">Doctor's Notes</h6>
+            <textarea class="form-control" name="doctors_notes" rows="3"></textarea>
+
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="modal-footer mt-4">
+            <button type="reset" class="btn btn-secondary">
+              <i class="bi bi-arrow-clockwise"></i> Clear
+            </button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+              <i class="bi bi-check"></i> Finish
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+                        
+
+                        
+    
+
+
                     {% endfor %}
     
-                    <div class="modal-footer">
-                        <input type="reset" class="btn btn-secondary m-2" value="CLEAR">
-                        <input type="submit" class="btn btn-primary text-light" value="SUBMIT INFORMATION">
-                    </div>
+                    <div class="modal-footer mt-4">
+                      <!-- Clear Button with Refresh Icon -->
+                      <button type="reset" class="btn btn-secondary m-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Clear Form">
+                          <i class="bi bi-arrow-clockwise"></i>
+                      </button>
+                  
+                      <!-- Submit Button with Icon and Text -->
+                      <button type="submit" class="btn btn-primary text-light d-flex align-items-center gap-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Submit Information">
+                        Submit<i class="bi bi-send-check"></i> 
+                      </button>
+                  </div>
+                  
                 </form>
             </div>
         </div>
